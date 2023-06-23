@@ -13,13 +13,20 @@ import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 
 import javax.ws.rs.core.Application;
-import java.io.File;
 import java.util.List;
 
 public class HistogramChart extends Application {
     public static void main(String[] args) {
-        SparkSession sparkSession = SparkSession.builder().master("local").appName("ReadCsv").getOrCreate();
-        Dataset<Row> dataset = sparkSession.read().option("header", "true").csv("src/main/resources/telecom.csv");
+        SparkSession sparkSession = SparkSession
+                .builder()
+                .master("local")
+                .appName("ReadingCsv")
+                .getOrCreate();
+        Dataset<Row> dataset = sparkSession
+                .read()
+                .option("header", "true")
+                .csv("src/main/resources/telecom.csv");
+
         Dataset<Row> datasetMesesComoCliente = dataset.select("MesesComoCliente");
         List<Row> listaMesesComoCliente = datasetMesesComoCliente.collectAsList();
         double[] listaValoresMeses = new double[listaMesesComoCliente.size()];
@@ -33,12 +40,12 @@ public class HistogramChart extends Application {
         HistogramDataset datas = new HistogramDataset();
         datas.addSeries("key", listaValoresMeses, 20);
 
-        JFreeChart histogram = ChartFactory.createHistogram("JFreeChart Histogram", "Data", "Frequency", datas, PlotOrientation.VERTICAL, false, false, false);
+        JFreeChart histogram = ChartFactory.createHistogram("Histogram", "Data", "Frequency", datas, PlotOrientation.VERTICAL, false, false, false);
         final ChartPanel chartPanel = new ChartPanel(histogram);
         chartPanel.setPreferredSize(new java.awt.Dimension(450, 270));
 
         // Mostrando o histograma na tela
-        ApplicationFrame applicationFrame = new ApplicationFrame("Histograma");
+        ApplicationFrame applicationFrame = new ApplicationFrame("JFreeChart");
         applicationFrame.setContentPane(chartPanel);
         applicationFrame.pack();
         RefineryUtilities.centerFrameOnScreen(applicationFrame);
